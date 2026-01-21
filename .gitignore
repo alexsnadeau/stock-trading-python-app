@@ -1,3 +1,5 @@
 # Ignore the virtual environment
 
 bootcamp/
+.DS_Store
+**/.DS_Store
