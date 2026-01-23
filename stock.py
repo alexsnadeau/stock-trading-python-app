@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import pandas as pd
 import snowflake.connector
 from snowflake.connector.pandas_tools import write_pandas
+from datetime import datetime
 load_dotenv()
 
 #call API key from .env file
@@ -46,18 +47,18 @@ def run_stock_job():
 
 # can use this code but polygon has a limit so it won't run the full code. must add a limit to the while statement
         
-    example_ticker = {'ticker': 'AMR', 
-                    'name': 'Alpha Metallurgical Resources, Inc.', 
-                    'market': 'stocks', 
-                    'locale': 'us', 
-                    'primary_exchange': 'XNYS', 
-                    'type': 'CS', 
-                    'active': True, 
-                    'currency_name': 'usd', 
-                    'cik': '0001704715', 
-                    'composite_figi': 'BBG00DGWV035', 
-                    'share_class_figi': 'BBG00DGWV044', 
-                    'last_updated_utc': '2026-01-20T07:05:28.530088098Z'}
+    # example_ticker = {'ticker': 'AMR', 
+    #                 'name': 'Alpha Metallurgical Resources, Inc.', 
+    #                 'market': 'stocks', 
+    #                 'locale': 'us', 
+    #                 'primary_exchange': 'XNYS', 
+    #                 'type': 'CS', 
+    #                 'active': True, 
+    #                 'currency_name': 'usd', 
+    #                 'cik': '0001704715', 
+    #                 'composite_figi': 'BBG00DGWV035', 
+    #                 'share_class_figi': 'BBG00DGWV044', 
+    #                 'last_updated_utc': '2026-01-20T07:05:28.530088098Z'}
 
 
     # snowflake url is https://app.snowflake.com/ufyqvha/uxb79530/#/data/databases
@@ -90,6 +91,8 @@ def load_to_snowflake(data_list):
     # Convert the list of dicts directly to a DataFrame
     df = pd.DataFrame(data_list)
 
+    df['DS'] = datetime.now().date()
+
     # IMPORTANT: Snowflake usually expects uppercase column names. 
     # This line ensures the DataFrame column names match Snowflake's default casing.
     df.columns = [col.upper() for col in df.columns]
@@ -99,7 +102,7 @@ def load_to_snowflake(data_list):
         success, nchunks, nrows, _ = write_pandas(
             conn=conn,
             df=df,
-            table_name='stocks',  # <--- REPLACE WITH YOUR ACTUAL TABLE NAME
+            table_name='STOCKS',  # <--- REPLACE WITH YOUR ACTUAL TABLE NAME
             database=os.getenv("SNOWFLAKE_DATABASE"),
             schema=os.getenv("SNOWFLAKE_SCHEMA")
         )
