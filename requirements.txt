@@ -3,3 +3,5 @@ openai
 dotenv
 csv
 schedule
+pandas
+snowflake
